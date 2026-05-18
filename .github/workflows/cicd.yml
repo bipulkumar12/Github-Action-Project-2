@@ -2,7 +2,7 @@ name: CICD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   compile:
@@ -30,20 +30,36 @@ jobs:
 
       - name: Install Trivy
         run: |
+          sudo apt-get update -y
           sudo apt-get install wget gnupg -y
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | \
+          gpg --dearmor | \
+          sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | \
+          sudo tee /etc/apt/sources.list.d/trivy.list
+
           sudo apt-get update -y
           sudo apt-get install trivy -y
 
       - name: Trivy File System Scan
-        run: trivy fs --format table -o fs-report.json .
+        run: |
+          trivy fs --format table -o fs-report.json .
 
       - name: Install Gitleaks
         run: |
           wget https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz
           tar -xzf gitleaks_linux_x64.tar.gz
+          chmod +x gitleaks
           sudo mv gitleaks /usr/local/bin/
 
+      - name: Verify Gitleaks
+        run: gitleaks version
+
       - name: Gitleaks Code Scan
-        run: gitleaks detect --source . --report-path gitleaks-report.json --report-format json
+        run: |
+          gitleaks detect \
+          --source . \
+          --report-path gitleaks-report.json \
+          --report-format json
