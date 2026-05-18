@@ -47,19 +47,7 @@ jobs:
         run: |
           trivy fs --format table -o fs-report.json .
 
-      - name: Install Gitleaks
-        run: |
-          wget https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz
-          tar -xzf gitleaks_linux_x64.tar.gz
-          chmod +x gitleaks
-          sudo mv gitleaks /usr/local/bin/
-
-      - name: Verify Gitleaks
-        run: gitleaks version
-
-      - name: Gitleaks Code Scan
-        run: |
-          gitleaks detect \
-          --source . \
-          --report-path gitleaks-report.json \
-          --report-format json
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
