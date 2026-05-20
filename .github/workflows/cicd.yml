@@ -66,7 +66,10 @@ jobs:
 
       - name: Gitleaks Scan
         run: |
-          gitleaks detect --source . --report-format json --report-path gitleaks-report.json
+          gitleaks detect \
+          --source . \
+          --report-format json \
+          --report-path gitleaks-report.json
 
   test:
     runs-on: self-hosted
@@ -114,7 +117,7 @@ jobs:
 
       - name: SonarQube Quality Gate Check
         id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master
+        uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
         with:
           pollingTimeoutSec: 600
         env:
