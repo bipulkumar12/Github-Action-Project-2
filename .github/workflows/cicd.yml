@@ -110,7 +110,7 @@ jobs:
         run: mvn package
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v4.1.0
+        uses: SonarSource/sonarqube-scan-action@v8.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: http://13.60.184.0:9000
